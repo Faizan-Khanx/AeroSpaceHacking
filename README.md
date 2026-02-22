@@ -262,13 +262,13 @@ flowchart TD
     GSM_OB --> WAVE_SRV
     PAX_LAN --> HEE
 
-    %% --- VISUAL STYLING ---
-    classDef space fill:#fff3e0,stroke:#e65100,stroke-width:2px;
-    classDef ground fill:#f1f8e9,stroke:#33691e,stroke-width:2px;
-    classDef sensor fill:#e3f2fd,stroke:#1565c0,stroke-width:1px;
-    classDef main fill:#ffebee,stroke:#b71c1c,stroke-width:3px;
-    classDef network fill:#e8eaf6,stroke:#1a237e,stroke-width:2px,stroke-dasharray: 5 5;
-    classDef cabinet fill:#f3e5f5,stroke:#4a148c;
+    %% --- VISUAL STYLING (Professional Blueprint) ---
+    classDef space stroke:#E65100,stroke-width:2px,fill:none,stroke-dasharray: 5 5;
+    classDef ground stroke:#33691E,stroke-width:2px,fill:none;
+    classDef sensor stroke:#1565C0,stroke-width:2px,fill:none;
+    classDef main stroke:#B71C1C,stroke-width:3px,fill:none;
+    classDef network stroke:#1A237E,stroke-width:2px,fill:none,stroke-dasharray: 2 2;
+    classDef cabinet stroke:#4A148C,stroke-width:1.5px,fill:none;
 
     class GPS,GLONASS,GALILEO,SBAS,INMARSAT,IRIDIUM,KU_KA space;
     class ATC_VHF,DATIS,VOLMET,ACARS_HOST,MAINT_GW ground;
@@ -396,8 +396,12 @@ graph BT
     L3 --> L4
     L4 --> L5
     
-    style L1 fill:#f9f,stroke:#333,stroke-width:2px
-    style L5 fill:#bbf,stroke:#333,stroke-width:2px
+    %% Professional styling - No background colors
+    style L1 fill:none,stroke:#333,stroke-width:2px,stroke-dasharray: 2 2
+    style L2 fill:none,stroke:#333,stroke-width:2px
+    style L3 fill:none,stroke:#333,stroke-width:2px
+    style L4 fill:none,stroke:#333,stroke-width:2px
+    style L5 fill:none,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
 ```
 
 ---
@@ -498,9 +502,10 @@ graph TD
     Telecon --> SatCom
     Telecon --> ATC
     
-    style Aircraft fill:#e1f5fe,stroke:#01579b
-    style Ground fill:#f1f8e9,stroke:#33691e
-    style Space fill:#fff3e0,stroke:#e65100
+    %% Professional styling - No background colors
+    style Aircraft fill:none,stroke:#01579b,stroke-width:2px
+    style Ground fill:none,stroke:#33691e,stroke-width:2px
+    style Space fill:none,stroke:#e65100,stroke-width:2px,stroke-dasharray: 5 5
 ```
 
 ---
@@ -521,8 +526,11 @@ graph TD
     E --> F[Injecting False Lat/Long/Time]
     F --> G[Navigation Deviation / FMS Error]
     
-    style C fill:#ffcccc,stroke:#333,stroke-width:2px
-    style G fill:#ff6666,stroke:#333,stroke-width:2px
+    F --> G[Navigation Deviation / FMS Error]
+    
+    %% Professional styling
+    style C stroke:#B71C1C,stroke-width:2px,fill:none,stroke-dasharray: 5 5
+    style G stroke:#B71C1C,stroke-width:3px,fill:none
 ```
 
 ### 2. Theoretical IFE-to-ACD Pivot
@@ -541,7 +549,7 @@ graph LR
     B -.->|Pivot Attempt| C{Network Gateway}
     C -->|Access Denied| D
     
-    classDef defense fill:#ccffcc,stroke:#333,stroke-width:2px;
+    classDef defense stroke:#2E7D32,stroke-width:2px,fill:none;
     class C defense;
     
     %% Note: Hardware Air-Gaps & Data Diodes prevent physical signal flow to ACD.
@@ -609,8 +617,10 @@ graph LR
     IFE -.->|Cross-Network Probe| G{Service Gateway}
     G --x|Blocked| CD[Control Domain]
     
-    style H fill:#ffcccc
-    style CD fill:#ccffcc
+    G --x|Blocked| CD[Control Domain]
+    
+    style H stroke:#B71C1C,stroke-width:2px,fill:none,stroke-dasharray: 5 5
+    style CD stroke:#2E7D32,stroke-width:2px,fill:none
 ```
 
 ---
@@ -639,8 +649,8 @@ graph TD
     B -->|Exfiltration| A[Attacker Server]
     B -->|Original Flow| P[Legit Payment Processor]
     
-    style S fill:#ff9999
-    style A fill:#ff6666
+    style S stroke:#B71C1C,stroke-width:2px,fill:none
+    style A stroke:#B71C1C,stroke-width:2px,fill:none,stroke-dasharray: 5 5
 ```
 
 ---
