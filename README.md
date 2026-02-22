@@ -32,27 +32,281 @@ This document serves as a comprehensive resource that highlights the unique cybe
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Vulnerabilities in Aviation Systems](#vulnerabilities-in-aviation-systems)
-3. [Key Cybersecurity Incidents in Aviation](#key-cybersecurity-incidents-in-aviation)
-4. [Defense Techniques](#defense-techniques)
-5. [Detailed Use Cases](#detailed-use-cases)
-6. [STRIDE Threat Classification](#stride-threat-classification)
-7. [Risk Assessment Framework](#risk-assessment-framework)
-8. [Emerging Technologies in Aviation Cybersecurity](#emerging-technologies-in-aviation-cybersecurity)
-9. [Aviation Ecosystem Landscape](#aviation-ecosystem-landscape)
-10. [Visual Attack Flows](#visual-attack-flows)
-11. [Best Practices](#best-practices)
-12. [Conclusion](#conclusion)
-13. [References](#references)
-14. [Contact Information for Collaboration](#contact-information-for-collaboration)
-15. [Feedback Section](#feedback-section)
-16. [Appendices](#appendices)
+2. [Understanding Aviation Systems](#understanding-aviation-systems)
+3. [High-Level Design (HLD) of Aviation Architecture](#high-level-design-hld-of-aviation-architecture)
+4. [Vulnerabilities in Aviation Systems](#vulnerabilities-in-aviation-systems)
+5. [Key Cybersecurity Incidents in Aviation](#key-cybersecurity-incidents-in-aviation)
+6. [Defense Techniques](#defense-techniques)
+7. [Detailed Use Cases](#detailed-use-cases)
+8. [STRIDE Threat Classification](#stride-threat-classification)
+9. [Risk Assessment Framework](#risk-assessment-framework)
+10. [Emerging Technologies in Aviation Cybersecurity](#emerging-technologies-in-aviation-cybersecurity)
+11. [Aviation Ecosystem Landscape](#aviation-ecosystem-landscape)
+12. [Visual Attack Flows](#visual-attack-flows)
+13. [Best Practices](#best-practices)
+14. [Conclusion](#conclusion)
+15. [References](#references)
+16. [Contact Information for Collaboration](#contact-information-for-collaboration)
+17. [Feedback Section](#feedback-section)
+18. [Appendices](#appendices)
 
 ---
 
 ## Introduction
 
 Aviation is a cornerstone of global transportation and economic connectivity. However, as the industry increasingly relies on interconnected digital systems, it becomes more vulnerable to cyber threats that can impact passenger safety, data integrity, and operational continuity. Cybersecurity in aviation is therefore critical, involving the protection of sensitive data, navigation systems, and communication channels. This research aims to identify vulnerabilities within aviation systems and propose robust defense strategies to safeguard this vital industry from the evolving landscape of cyber threats.
+
+---
+
+## Understanding Aviation Systems
+
+The modern aircraft is no longer just a mechanical machine; it is a complex, flying data center. To ensure safety and security, the system is architected into three primary **Logical Domains**. Understanding these domains is crucial for identifying where vulnerabilities lie and how critical systems are protected.
+
+### 1. 🚀 Aircraft Control Domain (ACD)
+The ACD is the most critical layer. It encompasses all systems required to keep the aircraft in the air and safely navigate it to its destination. 
+
+*   **Primary Components**:
+    *   **Flight Management System (FMS)**: The "Autopilot brain" that follows the programmed flight path.
+    *   **ADIRU (Air Data/Inertial Reference Unit)**: Provides position, altitude, and speed data.
+    *   **FADEC**: Electronic controllers for engine performance.
+*   **Vulnerability Profile**: Attacks here are rare due to extreme isolation but catastrophic if successful. Risks include **Sensor Spoofing** (tricking GPS/Pitot tubes) and **Avionics Bus Hijacking** (ARINC 429).
+*   **Criticality**: 🔴 **Maximum (Safety-Critical)** 
+
+---
+
+### 2. 📋 Airline Information Services Domain (AISD)
+This domain bridges the gap between the cockpit and the airline's ground operations. it handles administrative data and real-time operational telemetry.
+
+*   **Primary Components**:
+    *   **EFB (Electronic Flight Bag)**: Tablets used by pilots for charts, weather, and weight-and-balance calculations.
+    *   **ACARS/SatCom**: Digital data links used to send "text-based" status updates to the ground.
+*   **Vulnerability Profile**: The AISD is often the "soft entry point." Vulnerabilities include **Supply-Chain Attacks** (compromised flight charts) and **Intercepting Unencrypted Telemetry**.
+*   **Criticality**: 🟡 **High (Operational-Critical)**
+
+---
+
+### 3. 🎮 Passenger Information & Entertainment Domain (PIED)
+The PIED is designed for passenger comfort. Currently, this is the most connected domain because it interfaces with the public internet.
+
+*   **Primary Components**:
+    *   **IFE (In-Flight Entertainment)**: The screens and media servers at every seat.
+    *   **Cabin Wi-Fi**: The onboard network providing internet access to passenger devices.
+*   **Vulnerability Profile**: The primary risk is **Cross-Domain Pivoting**. While "Air-Gaps" exist, attackers explore theoretical paths from the IFE system to the AISD through shared network hardware (Gateways).
+*   **Criticality**: 🟢 **Low (Service-Critical)**
+
+### 🏁 How the System Works (Summary)
+Digital data flows from the **Global Environment** (Satellites/ATC) into the **ACD** for navigation. Simultaneously, the **AISD** syncs flight logs with the airline's home base. Most importantly, a **Security Gateway** (Data Diode) sits between these domains to ensure that a compromised movie screen in the **PIED** cannot send a command to the engines in the **ACD**.
+
+## High-Level Design (HLD): Hyper-Detailed Aviation System Architecture
+
+This "God-Level" HLD maps the total complexity of a modern connected aircraft. It illustrates the symbiotic relationship between Integrated Modular Avionics (IMA), multi-path global communications, and the multi-layered cabin and entertainment infrastructure.
+
+```mermaid
+flowchart TD
+    %% --- EXTERNAL GLOBAL INFRASTRUCTURE ---
+    subgraph Global_Networks ["🌐 Global Aerospace Infrastructure"]
+        subgraph GNSS ["🛰️ Navigation Clusters"]
+            GPS["GPS (USA)"]
+            GLONASS["GLONASS (Russia)"]
+            GALILEO["Galileo (EU)"]
+            SBAS["SBAS/WAAS (Augmentation)"]
+        end
+        
+        subgraph Terrestrial ["📡 Ground & ATC Services"]
+            ATC_VHF["ATC Voice (VHF/HF)"]
+            DATIS["D-ATIS (Digital Airport Info)"]
+            VOLMET["VOLMET (Weather)"]
+            ACARS_HOST["SITA/ARINC ACARS Host"]
+            MAINT_GW["Maintenance Gatelink (Wi-Fi/4G)"]
+        end
+        
+        subgraph Space_Comms ["🌌 Satellite Networks"]
+            INMARSAT["Inmarsat (L-Band/SwiftBroadband)"]
+            IRIDIUM["Iridium (Certus/L-Band)"]
+            KU_KA["Ku/Ka-Band (Global Connectivity)"]
+        end
+    end
+
+    %% --- AIRCRAFT EXTERNAL TELEMETRY INTERFACES ---
+    subgraph External_Comms ["📡 Communication Front-End (LRUs)"]
+        RMU["Radio Management Unit (RMU)"]
+        SDU["Satellite Data Unit (SDU)"]
+        ADSB_OUT["ADS-B Out Transponder"]
+        ADSB_IN["ADS-B In Receiver"]
+        VDR_1["VHF Data Radio (VDR 1)"]
+        VDR_2["VHF Data Radio (VDR 2)"]
+    end
+
+    %% --- AIRCRAFT CONTROL DOMAIN (THE BRAIN) ---
+    subgraph ACD ["🚀 Aircraft Control Domain (ACD) - Safety Level A"]
+        direction TB
+
+        subgraph Sensors_Probes ["🧪 Advanced Sensor Suite"]
+            ADIRU_A["ADIRU A (Primary)"]
+            ADIRU_B["ADIRU B (Hot-Standby)"]
+            ADIRU_C["ADIRU C (Voting)"]
+            RAD_ALT["Radar Altimeter (LRRA)"]
+            WX_RADAR["Weather Radar (WXR)"]
+            ICE_DET["Ice Detection Sensor"]
+        end
+
+        subgraph IMA_Core ["🌋 Integrated Modular Avionics (IMA)"]
+            CPIOM_A["CPIOM A (Flight Controls)"]
+            CPIOM_B["CPIOM B (Apu/Fuel)"]
+            CPIOM_C["CPIOM C (Landing Gear)"]
+            FMS_MNG["FMS Manager (Dual-Stack)"]
+            MCDU_P["MCDU (Pilot Terminal)"]
+            MCDU_C["MCDU (Co-Pilot Terminal)"]
+        end
+
+        subgraph Safety_Systems ["🛡️ Critical Safety Systems"]
+            TCAS["TCAS (Collision Avoidance)"]
+            GPWS["E-GPWS (Proximity Warning)"]
+            FWC["Flight Warning Computer (FWC)"]
+        end
+
+        subgraph Data_Backbone ["📟 Avionics Data Bus Spine"]
+            ARINC_429{{"ARINC 429 Low-Speed Bus"}}
+            AFDX_SW_1{{"AFDX Switch A (A664)"}}
+            AFDX_SW_2{{"AFDX Switch B (A664)"}}
+            CAN_BUS{{"CAN Bus (Engine/Utility)"}}
+        end
+
+        subgraph Cockpit_Displays ["🕶️ Human-Machine Interface (HMI)"]
+            PFD_L["Left PFD (Primary)"]
+            PFD_R["Right PFD (Primary)"]
+            ND_L["Left Nav Display"]
+            ND_R["Right Nav Display"]
+            ECAM_U["Upper ECAM (Engine)"]
+            ECAM_L["Lower ECAM (System/SD)"]
+        end
+
+        subgraph Control_Execution ["⚙️ Mechanical Control"]
+            FADEC_1["FADEC Engine 1"]
+            FADEC_2["FADEC Engine 2"]
+            ACTUATOR["Flight Surface Actuators"]
+        end
+    end
+
+    %% --- THE DEFENSE PERIMETER ---
+    subgraph Perimeter ["🛡️ Aircraft Security Perimeter"]
+        DIODE_1{{"🔐 ARINC 811 Data Diode"}}
+        FW_GW{{"🔥 Secure Cabin/Cockpit Gateway"}}
+        ADCN_NET{{"🌐 ADCN Managed Network"}}
+    end
+
+    %% --- AIRLINE INFORMATION DOMAIN ---
+    subgraph AISD ["📋 Airline Services Domain (AISD)"]
+        EFB_TAB["EFB Pilot Tablet"]
+        OITS_SRV["Onboard Info Server"]
+        QAR_REC["Quick Access Recorder"]
+        MAINT_PORT["Maintenance Access Port"]
+        CIDS_DIR["CIDS (Cabin Intercom)"]
+    end
+
+    %% --- PASSENGER & CABIN DOMAIN ---
+    subgraph PIED ["🎮 Passenger Domain (PIED)"]
+        subgraph IFE_Core ["📺 IFE Architecture"]
+            HEE["Head-End Equipment (Server)"]
+            ADB["Area Distribution Box"]
+            SEB["Seat Electronic Box (Node)"]
+            SMART_SCR["In-Seat Smart Screen"]
+        end
+        
+        subgraph Connectivity_Cabin ["📶 Cabin Network"]
+            WAP_1["Cabin WAP (Interior)"]
+            GSM_OB["Onboard GSM/Cellular"]
+            PAX_LAN["Passenger LAN/Entertainment"]
+        end
+    end
+
+    %% --- LOGIC FLOWS & DATA BRIDGES ---
+    %% External to Aircraft
+    GNSS -->|LF/RF| Sensors_Probes
+    Terrestrial <-->|VHF/HF| External_Comms
+    Space_Comms <-->|S/Ku/Ka| External_Comms
+
+    %% Hardware Interfacing
+    External_Comms <-->|Serial/IP| IMA_Core
+    External_Comms -->|High Speed| Perimeter
+
+    %% ACD Deep Integration
+    Sensors_Probes --> ARINC_429
+    Safety_Systems <--> ARINC_429
+    ARINC_429 <--> IMA_Core
+    IMA_Core <--> AFDX_SW_1
+    AFDX_SW_1 <--> AFDX_SW_2
+    AFDX_SW_2 --> Cockpit_Displays
+    
+    IMA_Core --> CAN_BUS
+    CAN_BUS --> Control_Execution
+    
+    %% Cross-Domain Flow (Security Controlled)
+    IMA_Core -.->|Oneway UDP| DIODE_1
+    DIODE_1 --> ADCN_NET
+    FW_GW <--> ADCN_NET
+    ADCN_NET --> AISD
+    ADCN_NET <--> PIED
+
+    %% AISD Internal Routing
+    AISD --> EFB_TAB
+    AISD --> QAR_REC
+    AISD --> CIDS_DIR
+    MAINT_PORT --> AISD
+
+    %% PIED Detailed Flow
+    HEE --> ADB
+    ADB --> SEB
+    SEB --> SMART_SCR
+    WAP_1 --> HEE
+    GSM_OB --> WAVE_SRV
+    PAX_LAN --> HEE
+
+    %% --- VISUAL STYLING ---
+    classDef space fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+    classDef ground fill:#f1f8e9,stroke:#33691e,stroke-width:2px;
+    classDef sensor fill:#e3f2fd,stroke:#1565c0,stroke-width:1px;
+    classDef main fill:#ffebee,stroke:#b71c1c,stroke-width:3px;
+    classDef network fill:#e8eaf6,stroke:#1a237e,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef cabinet fill:#f3e5f5,stroke:#4a148c;
+
+    class GPS,GLONASS,GALILEO,SBAS,INMARSAT,IRIDIUM,KU_KA space;
+    class ATC_VHF,DATIS,VOLMET,ACARS_HOST,MAINT_GW ground;
+    class ADIRU_A,ADIRU_B,ADIRU_C,RAD_ALT,WX_RADAR,ICE_DET sensor;
+    class IMA_Core,CPIOM_A,CPIOM_B,CPIOM_C,FMS_MNG,FADEC_1,FADEC_2 main;
+    class DIODE_1,FW_GW,ADCN_NET network;
+    class HEE,ADB,SEB,SMART_SCR cabinet;
+```
+
+### Component Breakdown: The Digital Nervous System
+
+To understand the attack surface, we must first break down the functional role of each major segment in the architecture:
+
+#### 1. 🌐 Global Infrastructure (External Segment)
+- **GNSS Clusters**: Provides high-precision PNT (Position, Navigation, and Timing) data from GPS, GLONASS, and Galileo. This is the primary target for **GPS Spoofing**.
+- **Terrestrial ATC**: Ground-based radar and voice/data links including **D-ATIS** and **VOLMET**. Includes **ACARS** for administrative messaging between the aircraft and the AOC.
+- **Space Comms**: High-bandwidth satellite networks (Inmarsat, Iridium, Ku/Ka-Band) for global internet and cockpit data links.
+
+#### 2. 🚀 Aircraft Control Domain (ACD) - The Brain
+- **IMA Core (Integrated Modular Avionics)**: The centralized computing platform where shard processing modules (**CPIOMs**) host critical applications for flight control, fuel management, and landing gear.
+- **FMS Manager**: The redundant brain that calculates flight paths, optimizes performance, and manages the navigation database.
+- **Advanced Sensors**: A redundant suite including **ADIRUs** (Air Data/Inertial Reference), Radar Altimeters, and specialized Ice Detection probes.
+- **Safety Systems**: 
+    - **TCAS**: Prevents mid-air collisions via transponder interrogation.
+    - **GPWS**: Prevents terrain-related accidents (CFIT).
+- **Data Backbone**: 
+    - **AFDX (ARINC 664)**: High-speed, deterministic Ethernet for mission-critical data.
+    - **ARINC 429**: The legacy serial backbone for point-to-point avionics communication.
+    - **CAN Bus**: Utility bus for engine and subsystem health monitoring.
+
+#### 3. 🛡️ Security Perimeter & Routing
+- **Data Diode (ARINC 811)**: A hardware-enforced one-way gate that allows safety data to flow *out* to the cabin (for moving maps, etc.) but strictly prevents any external data from entering the **ACD**.
+- **Secure Gateway**: A firewall-managed bridge between the cockpit and cabin networks.
+
+#### 4. 📋 Airline Information (AISD) & Passenger (PIED) Domains
+- **EFB (Electronic Flight Bag)**: The pilot's operational tablet. A critical interface for flight plans and charts, often targeted via supply-chain or update attacks.
+- **IFE Core (In-Flight Entertainment)**: The media server architecture (HEE, ADB, SEB) that delivers content to passenger seats. Investigations often focus on this as a potential (though highly isolated) entry point.
+- **Cabin Connectivity**: WAPs and Onboard GSM services providing passenger internet access.
 
 ---
 
@@ -667,7 +921,7 @@ The aviation industry's rapid technological advancements have exposed it to an i
 ---
 ## Contributions
 
-We welcome contributions from individuals and organizations interested in enhancing this research. If you would like to contribute, please visit our GitHub repository [here](https://github.com/FlightHacking) and submit your suggestions or improvements.
+We welcome contributions from individuals and organizations interested in enhancing this research. If you would like to contribute, please visit our GitHub repository [here](https://github.com/Faizan-Khanx/AeroSpaceHacking) and submit your suggestions or improvements.
 
 ### Contributions Can Include:
 - Research and Data Collection
@@ -703,7 +957,7 @@ We are constantly looking to refine this research and add more case studies. If 
 
 | 📧 Contact | 💬 Discussion | 🛠️ Contributions |
 |---|---|---|
-| [fk776794@gmail.com](mailto:fk776794@gmail.com) | [GitHub Discussions](https://github.com/faizan-khanx) | [Pull Requests](https://github.com/FlightHacking/pulls) |
+| [fk776794@gmail.com](mailto:fk776794@gmail.com) | [GitHub Discussions](https://github.com/Faizan-Khanx/AeroSpaceHacking/discussions) | [Pull Requests](https://github.com/Faizan-Khanx/AeroSpaceHacking/pulls) |
 
 ---
 
@@ -711,13 +965,10 @@ We are constantly looking to refine this research and add more case studies. If 
 [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white)](https://www.instagram.com/EthicalFaizan)
 [![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?style=for-the-badge&logo=Twitter&logoColor=white)](https://www.twitter.com/EthicalFaizan)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=for-the-badge&logo=LinkedIn&logoColor=white)](https://www.linkedin.com/in/EthicalFaizan)
-[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=GitHub&logoColor=white)](https://www.github.com/faizan-khanx)
+[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=GitHub&logoColor=white)](https://github.com/Faizan-Khanx)
 
 </div>
 
-## GITHUB STATS
-
-![Faizan's GitHub stats](https://github-readme-stats.vercel.app/api?username=faizan-khanx&show=reviews,discussions_started,discussions_answered,prs_merged,prs_merged_percentage&theme=dark#gh-dark-mode-only)
 
 ---
 
@@ -731,3 +982,4 @@ We are constantly looking to refine this research and add more case studies. If 
 6.  **STRIDE Model**: [Microsoft Security Development Lifecycle](https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2008/cc307404(v=msdn.10))
 
 ---
+
