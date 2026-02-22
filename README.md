@@ -1,4 +1,23 @@
-# Cybersecurity Vulnerabilities and Defense Techniques in the Aviation Industry
+# ✈️ AeroSpace Cybersecurity: Vulnerabilities & Defense
+### *A Comprehensive Research Framework for Aviation Asset Protection*
+
+<div align="center">
+
+![Aviation Security](https://img.shields.io/badge/Industry-Aviation-blue?style=for-the-badge&logo=airbus)
+![Cybersecurity](https://img.shields.io/badge/Focus-Cybersecurity-red?style=for-the-badge&logo=eset)
+![Status](https://img.shields.io/badge/Status-Maintained-success?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+
+---
+
+**Analyzing the digital cockpit of the modern world.**  
+This repository provides an architected deep-dive into the cybersecurity vulnerabilities of the aviation industry, mapping out strategic defense frameworks to counter evolving threats.
+
+[Introduction](#-introduction) • [Vulnerabilities](#-vulnerabilities) • [Defense](#-defense-techniques) • [STRIDE](#-stride-model) • [Cases](#-case-studies) • [Code](#-practical-implementation)
+
+</div>
+
+---
 
 This repository provides an in-depth analysis of cybersecurity vulnerabilities specific to the aviation industry, along with strategic defense techniques designed to counter these threats. The research explores various potential cyber threats faced by aviation systems, such as Distributed Denial of Service (DDoS) attacks, GPS spoofing, and in-flight entertainment (IFE) vulnerabilities. Additionally, it offers defense frameworks, practical recommendations, and emerging technologies for protecting critical aviation infrastructure.
 
@@ -20,12 +39,14 @@ This document serves as a comprehensive resource that highlights the unique cybe
 6. [STRIDE Threat Classification](#stride-threat-classification)
 7. [Risk Assessment Framework](#risk-assessment-framework)
 8. [Emerging Technologies in Aviation Cybersecurity](#emerging-technologies-in-aviation-cybersecurity)
-9. [Best Practices](#best-practices)
-10. [Conclusion](#conclusion)
-11. [References](#references)
-12. [Contact Information for Collaboration](#contact-information-for-collaboration)
-13. [Feedback Section](#feedback-section)
-14. [Appendices](#appendices)
+9. [Aviation Ecosystem Landscape](#aviation-ecosystem-landscape)
+10. [Visual Attack Flows](#visual-attack-flows)
+11. [Best Practices](#best-practices)
+12. [Conclusion](#conclusion)
+13. [References](#references)
+14. [Contact Information for Collaboration](#contact-information-for-collaboration)
+15. [Feedback Section](#feedback-section)
+16. [Appendices](#appendices)
 
 ---
 
@@ -85,6 +106,46 @@ Below are examples of how defense techniques have been effectively implemented i
 - **Application Security**: Implementation of Web Application Firewalls (WAFs) in airline booking systems has significantly reduced the risk of SQL injection attacks.
 - **Incident Response Planning**: Major airlines have established dedicated cybersecurity incident response teams to quickly address threats and vulnerabilities as they arise.
 
+### 🛡️ Defense-in-Depth Architecture
+A multi-layered security approach is essential in aviation to ensure that if one control fails, others remain to protect the Aircraft Control Domain (ACD).
+
+```mermaid
+graph BT
+    subgraph L5 ["Layer 5: 🧘 Human & Policy"]
+        P1[Security Training]
+        P2[Vetting & Clearances]
+        P3[Regular Audits]
+    end
+    subgraph L4 ["Layer 4: 💾 Data & Encryption"]
+        D1[AES-256 Encryption]
+        D2[Hardware Security Modules]
+        D3[PKI Infrastructure]
+    end
+    subgraph L3 ["Layer 3: 💻 Host & Endpoint"]
+        H1[EDR / Antivirus]
+        H2[OS Hardening]
+        H3[Patch Management]
+    end
+    subgraph L2 ["Layer 2: 🌐 Network & App"]
+        N1[IDS / IPS]
+        N2[Micro-segmentation]
+        N3[WAF / API Security]
+    end
+    subgraph L1 ["Layer 1: 🛡️ Perimeter"]
+        F1[Firewalls]
+        F2[Data Diodes / Air-gaps]
+        F3[VPN / Encryption]
+    end
+    
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    
+    style L1 fill:#f9f,stroke:#333,stroke-width:2px
+    style L5 fill:#bbf,stroke:#333,stroke-width:2px
+```
+
 ---
 
 ## STRIDE Threat Classification
@@ -137,6 +198,103 @@ Compliance with industry standards and regulations is critical to ensuring cyber
 
 ---
 
+---
+
+## Aviation Ecosystem Landscape
+
+The aviation ecosystem is a massive, interconnected network involving space, ground, and airborne segments. Understanding this landscape is critical for identifying potential entry points for attackers.
+
+```mermaid
+graph TD
+    subgraph Space ["🛰️ Space Segment"]
+        GPS[GNSS / GPS Satellites]
+        SatCom[Satellite Communication]
+    end
+
+    subgraph Ground ["🏢 Ground Segment"]
+        ATC[Air Traffic Control Center]
+        AirlineOps[Airline Operations Center]
+        GroundSupport[Maintenance & Ground Support]
+        Telecon[Telecommunication Networks]
+    end
+
+    subgraph Aircraft ["✈️ Aircraft Segment"]
+        subgraph ACD ["Aircraft Control Domain"]
+            FMS[Flight Management System]
+            FCC[Flight Control Computer]
+            ADSB[ADS-B Transceiver]
+        end
+        subgraph AISD ["Int. Service Domain"]
+            EFB[Electronic Flight Bag]
+            MaintNodes[Maintenance Nodes]
+        end
+        subgraph PIED ["Passenger Domain"]
+            IFE[In-Flight Entertainment]
+            Wi-Fi[In-Flight Wi-Fi]
+        end
+    end
+
+    GPS -->|L1/L2 Signals| ADSB
+    SatCom -->|Data Link| ACD
+    ATC -->|CPDLC / VHF| ACD
+    AirlineOps -->|ACARS| ACD
+    GroundSupport -->|Physical / Wi-Fi| AISD
+    AISD --- ACD
+    PIED -.->|Gateway / Diode| ACD
+    Telecon --> SatCom
+    Telecon --> ATC
+    
+    style Aircraft fill:#e1f5fe,stroke:#01579b
+    style Ground fill:#f1f8e9,stroke:#33691e
+    style Space fill:#fff3e0,stroke:#e65100
+```
+
+---
+
+## Visual Attack Flows
+
+To better understand the mechanics of aviation cyber-attacks, we use flow diagrams to visualize the path of an exploit.
+
+### 1. GPS Spoofing "Power Overtake" Flow
+This diagram illustrates how an attacker uses a high-power Signal Generator (SDR) to force an aircraft receiver to lock onto malicious PNT data.
+
+```mermaid
+graph TD
+    A["🛰️ GNSS Satellites"] -->|Low Power L1/L2 Signals| B("✈️ Aircraft Receiver")
+    C["📡 Attacker (SDR/HackRF)"] -->|High Power Spoofed Signals| B
+    B --> D{Signal Comparison}
+    D -->|Higher SNR Wins| E[Receiver Locks to Spoofed Signal]
+    E --> F[Injecting False Lat/Long/Time]
+    F --> G[Navigation Deviation / FMS Error]
+    
+    style C fill:#ffcccc,stroke:#333,stroke-width:2px
+    style G fill:#ff6666,stroke:#333,stroke-width:2px
+```
+
+### 2. Theoretical IFE-to-ACD Pivot
+Visualizing the bridge between the **Passenger Information and Entertainment Domain (PIED)** and the **Aircraft Control Domain (ACD)**.
+
+```mermaid
+graph LR
+    subgraph PIED ["Passenger Domain"]
+    A[PAX Device] -->|Wi-Fi| B[IFE System]
+    end
+    
+    subgraph ACD ["Control Domain"]
+    D[Avionics Bus / ARINC 429] --> E[Flight Control Computer]
+    end
+    
+    B -.->|Pivot Attempt| C{Network Gateway}
+    C -->|Access Denied| D
+    
+    classDef defense fill:#ccffcc,stroke:#333,stroke-width:2px;
+    class C defense;
+    
+    %% Note: Hardware Air-Gaps & Data Diodes prevent physical signal flow to ACD.
+```
+
+---
+
 ## Case Studies
 
 Several case studies illustrate the application of cybersecurity strategies in aviation:
@@ -156,6 +314,23 @@ Several case studies illustrate the application of cybersecurity strategies in a
 | **Future Implementations**       | Regular security audits and DDoS attack simulation exercises         |
 | **Lessons Learned**              | Importance of a robust incident response plan and regular testing    |
 
+**Attack Chain Visualization:**
+```mermaid
+sequenceDiagram
+    participant Attacker
+    participant NetLayer as Network Layer
+    participant FMS as Flight Mangement System (Ground)
+    participant Aircraft
+    
+    Attacker->>NetLayer: Distributed Flooding (DDoS)
+    NetLayer->>FMS: Resource Exhaustion
+    FMS-->>NetLayer: System Unresponsive
+    FMS->XAircraft: Failure to Upload Flight Plans
+    Note over Aircraft: Flights Grounded for Hours
+```
+
+---
+
 ---
 
 ### 2. United Airlines In-flight Wi-Fi Breach (2015)
@@ -172,6 +347,20 @@ Several case studies illustrate the application of cybersecurity strategies in a
 | **Actions Taken**                | Conducted vulnerability assessments and penetration testing         |
 | **Future Implementations**       | Adoption of stronger encryption protocols for in-flight Wi-Fi       |
 
+**Theoretical Pivot Path:**
+```mermaid
+graph LR
+    H[Hacker Device] -->|Exploit| W[In-Flight Wi-Fi]
+    W -->|Unauthorized Access| IFE[In-Flight Entertainment]
+    IFE -.->|Cross-Network Probe| G{Service Gateway}
+    G --x|Blocked| CD[Control Domain]
+    
+    style H fill:#ffcccc
+    style CD fill:#ccffcc
+```
+
+---
+
 ---
 
 ### 3. British Airways Data Breach (2018)
@@ -187,6 +376,20 @@ Several case studies illustrate the application of cybersecurity strategies in a
 | **Response Measures**            | Improved security infrastructure and customer notification          |
 | **Actions Taken**                | Conducted a thorough investigation and upgraded payment security    |
 | **Future Implementations**       | Implemented multi-factor authentication for online transactions     |
+
+**Malware Flow (Magecart):**
+```mermaid
+graph TD
+    S[Malicious 22-line Script] -->|Injected| B[BA Payment Page]
+    U[Customer] -->|Enters Data| B
+    B -->|Exfiltration| A[Attacker Server]
+    B -->|Original Flow| P[Legit Payment Processor]
+    
+    style S fill:#ff9999
+    style A fill:#ff6666
+```
+
+---
 
 ---
 
@@ -327,86 +530,120 @@ A comprehensive understanding of the terminology related to aviation cybersecuri
 ### **Code Examples for Cybersecurity in Aviation**
 
 **Description:**  
-This section provides practical code snippets to help aviation cybersecurity professionals implement essential security measures. It covers various areas like threat detection, defense techniques, risk assessments, and emerging technologies. Each example includes a short description and a code sample to demonstrate its application.
+This section provides advanced, industry-aligned code implementations for aviation cybersecurity. These snippets demonstrate how to interact with real-world protocols like ADS-B and ARINC 429, and how to secure flight data telemetry.
 
 ---
 
-#### **1. Defense Techniques**
+#### **1. ADS-B Raw Telemetry Decoding (Industry Standard)**
+*Description*: ADS-B (Automatic Dependent Surveillance–Broadcast) messages are transmitted in raw hexadecimal. This Python example demonstrates how to decode the **ICAO Address** and **Packet Type** from a raw Mode S frame.
 
-   - **Network Segmentation (Firewall Configuration)**  
-     *Description*: This example demonstrates basic network segmentation using `iptables`. By segregating internal and external networks, this technique reduces the risk of unauthorized access to aviation systems.
-     ```bash
-     # Example of creating network segments in a firewall configuration (using iptables)
-     iptables -A INPUT -s <internal_network_IP> -j ACCEPT
-     iptables -A INPUT -s <external_network_IP> -j DROP
-     ```
+```python
+import pyModeS as pms
 
-   - **Multi-Factor Authentication (Python Example)**  
-     *Description*: This Python snippet provides a simple two-factor authentication using a one-time password (OTP) generator. Adding multi-factor authentication can significantly enhance security by requiring both password and OTP verification.
-     ```python
-     import pyotp
+# Raw Mode S Downlink Format (112 bits / 28 hex chars)
+# Example raw message captured via SDR
+raw_msg = "8D40621D58C382D690C8AC2863A7"
 
-     secret = pyotp.random_base32()
-     totp = pyotp.TOTP(secret)
-     print("Your OTP is:", totp.now())
-     ```
+def decode_adsb_frame(hex_msg):
+    # Get Downlink Format (DF)
+    df = pms.df(hex_msg)
+    # Get ICAO Aircraft Address
+    icao = pms.icao(hex_msg)
+    # Get Type Code (TC) for vulnerability mapping
+    type_code = pms.adsb.typecode(hex_msg)
+    
+    print(f"✈️ DF: {df} | ICAO: {icao} | Type Code: {type_code}")
 
-#### **2. Vulnerabilities in Aviation Systems**
+    if type_code >= 9 and type_code <= 18:
+        print("📍 Packet: Airborne Position (Possible Spoofing Target)")
+    elif type_code == 19:
+        print("🚀 Packet: Airborne Velocity")
 
-   - **GPS Spoofing Detection**  
-     *Description*: GPS spoofing can mislead aviation systems, posing severe risks. This Python function checks for signal anomalies, like low signal strength and high location inaccuracy, to help identify spoofing attempts.
-     ```python
-     def detect_gps_spoofing(signal_strength, location_accuracy):
-         if signal_strength < 20 and location_accuracy > 50:
-             return "Potential GPS Spoofing Detected"
-         return "GPS Signal Stable"
-     ```
+decode_adsb_frame(raw_msg)
+```
 
-   - **DDoS Detection (Request Monitoring)**  
-     *Description*: Detects high volumes of requests from the same IP address, potentially indicating a Distributed Denial of Service (DDoS) attack. This script sets a threshold and flags any IP with excessive requests.
-     ```python
-     from collections import Counter
+#### **2. ARINC 429 Avionics Bus Monitoring**
+*Description*: ARINC 429 is the backbone of legacy avionics. A critical security task is validating the **Parity Bit** and **Label** integrity to detect bus tampering or data corruption.
 
-     requests = [...]  # List of incoming request IPs
-     threshold = 1000
+```python
+def validate_arinc429_word(word_hex):
+    # Convert hex word to 32-bit binary
+    binary = bin(int(word_hex, 16))[2:].zfill(32)
+    
+    # ARINC 429 Structure:
+    # [32]: Parity | [30-31]: SSM | [11-29]: Data | [9-10]: SDI | [1-8]: Label
+    label = binary[24:32][::-1]  # Label is transmitted MSB first
+    parity_bit = int(binary[0])
+    data_bits = binary[1:32]
+    
+    # Calculate Odd Parity
+    calculated_parity = 1 if (data_bits.count('1') % 2 == 0) else 0
+    
+    is_valid = (parity_bit == calculated_parity)
+    print(f"📦 Label: {int(label, 2):03o} (Octal) | Parity Valid: {is_valid}")
+    return is_valid
 
-     request_counts = Counter(requests)
-     for ip, count in request_counts.items():
-         if count > threshold:
-             print(f"Potential DDoS attack from IP: {ip}")
-     ```
+# Example: Altitude Label (203 octal)
+validate_arinc429_word("83820061") 
+```
 
-#### **3. Risk Assessment Framework**
+#### **3. Secure Telemetry Signing (HMAC-SHA256)**
+*Description*: To prevent Man-in-the-Middle (MitM) attacks on Electronic Flight Bags (EFB), telemetry data must be cryptographically signed. This implementation ensures message integrity and authenticity.
 
-   - **Vulnerability Scan (Port Scanning)**  
-     *Description*: This Python snippet performs a basic port scan, identifying open ports on specified IPs. It is useful for identifying exposed services, which could be entry points for cyber threats.
-     ```python
-     import socket
+```python
+import hmac
+import hashlib
+import json
 
-     def scan_port(ip, port):
-         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-             s.settimeout(1)
-             if s.connect_ex((ip, port)) == 0:
-                 print(f"Port {port} is open on {ip}")
-             else:
-                 print(f"Port {port} is closed on {ip}")
-     ```
+# Aircraft-specific secret key stored in Hardware Security Module (HSM)
+SECRET_KEY = b"aviation_secret_hsm_key_0x8892"
 
-#### **4. Emerging Technologies in Aviation Cybersecurity**
+def generate_signed_telemetry(payload):
+    message = json.dumps(payload).encode()
+    signature = hmac.new(SECRET_KEY, message, hashlib.sha256).hexdigest()
+    return {"data": payload, "hmac": signature}
 
-   - **Basic AI Threat Detection Model**  
-     *Description*: This example illustrates how to train a basic machine learning model to detect threats based on specific patterns. The model could be adapted for real-time monitoring and classification of suspicious activities in aviation systems.
-     ```python
-     from sklearn.ensemble import RandomForestClassifier
-     import numpy as np
+def verify_telemetry(packet):
+    data = json.dumps(packet['data']).encode()
+    expected_hmac = hmac.new(SECRET_KEY, data, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(packet['hmac'], expected_hmac)
 
-     X = np.array([[1, 0, 0], [0, 1, 1], [1, 1, 0], [0, 0, 1]])
-     y = np.array([0, 1, 0, 1])  # 0 = safe, 1 = threat
+# Example Flight Telemetry
+telemetry = {"alt": 35000, "spd": 460, "hdg": 270}
+signed_packet = generate_signed_telemetry(telemetry)
 
-     model = RandomForestClassifier()
-     model.fit(X, y)
-     print("Model trained to detect basic threat indicators.")
-     ```
+if verify_telemetry(signed_packet):
+    print("✅ Telemetry verified: System Integrity Secure")
+else:
+    print("❌ SECURITY ALERT: Telemetry Tampering Detected!")
+```
+
+#### **4. AFDX / ARINC 664 Traffic Analysis**
+*Description*: Modern aircraft (A380/B787) use AFDX (Avionics Full-Duplex Switched Ethernet). This script simulates monitoring for **Bandwidth Allocation Gap (BAG)** violations to detect DoS attempts on the avionics network.
+
+```python
+import time
+
+class AFDXMonitor:
+    def __init__(self, bag_ms):
+        self.bag_limit = bag_ms / 1000.0 # Convert to seconds
+        self.last_frame_time = 0
+
+    def process_frame(self, virtual_link_id):
+        current_time = time.time()
+        gap = current_time - self.last_frame_time
+        
+        if gap < self.bag_limit:
+            print(f"🚨 WARNING: BAG Violation on VL {virtual_link_id}! Possible Jitter/DoS.")
+        else:
+            print(f"🟢 Frame on VL {virtual_link_id} within safety limits.")
+            
+        self.last_frame_time = current_time
+
+# Monitor for a Virtual Link with a 32ms BAG
+monitor = AFDXMonitor(bag_ms=32)
+monitor.process_frame(VL_ID=102)
+```
 
 ---
 
@@ -423,9 +660,9 @@ To enhance cybersecurity in aviation, the following best practices should be ado
 
 ## Conclusion
 
-The aviation industry's rapid technological advancements have exposed it to an increasing number of cybersecurity risks. By implementing a multi-layered defense approach—including STRIDE modeling, incident response
+The aviation industry's rapid technological advancements have exposed it to an increasing number of cybersecurity risks. By implementing a multi-layered defense approach including STRIDE modeling, incident response
 
- planning, and emerging technologies—aviation stakeholders can better safeguard their systems and ensure passenger safety. Continuous education and collaboration among industry professionals will be essential to adapting to the evolving threat landscape.
+ planning, and emerging technologies aviation stakeholders can better safeguard their systems and ensure passenger safety. Continuous education and collaboration among industry professionals will be essential to adapting to the evolving threat landscape.
 
 ---
 ## Contributions
@@ -441,26 +678,42 @@ We welcome contributions from individuals and organizations interested in enhanc
 
 ---
 
-## Appendices
+## 📚 Appendices
 
-Additional resources, research findings, and supplementary information can be found in the appendices.
+### A. Essential Tools for Aviation Research
+| Tool | Category | Description |
+|------|----------|-------------|
+| **PyModeS** | SDR / ADS-B | Python library for decoding Mode S and ADS-B messages. |
+| **GnuRadio** | Software Radio | Toolkit for signal processing and SDR hacking. |
+| **Wireshark** | Network | With ARINC 429/AFDX dissectors for bus analysis. |
+| **HackRF One** | Hardware | Wide-band SDR used for GPS spoofing research. |
+
+### B. Glossary Supplement
+- **ACARS**: Aircraft Communications Addressing and Reporting System.
+- **AFDX**: Avionics Full-Duplex Switched Ethernet.
+- **EFB**: Electronic Flight Bag (Pilots' tablet).
+- **ICAO**: International Civil Aviation Organization.
 
 ---
-For any questions or feedback, please contact [E-Mail Me](mailto:fk776794@gmail.com?subject=Feedback%20on%20Faizan%20Net&body=Hello%20Faizan,%0A%0AI%20have%20some%20feedback%20to%20share%20about%20your%20Faizan%20Net%20tool.%0A%0A%2D%20Issue%2FComplaint%3A%20[Please%20describe%20the%20issue%20or%20complaint]%0A%2D%20Suggestions%2FChanges%3A%20[Please%20provide%20your%20suggestions%20or%20changes]%0A%0AThank%20you!%0A%0ARegards,%0A[Your%20Name])
+## 🤝 Collaboration & Feedback
 
-<!-- display the social media buttons in your README -->
+We are constantly looking to refine this research and add more case studies. If you have any technical feedback or want to collaborate on new aviation security models, feel free to reach out.
 
-[![instagram](https://github.com/shikhar1020jais1/Git-Social/blob/master/Icons/Instagram.png (Instagram))][2]
-[![twitter](https://github.com/shikhar1020jais1/Git-Social/blob/master/Icons/Twitter.png (Twitter))][3]
-[![linkedin](https://github.com/shikhar1020jais1/Git-Social/blob/master/Icons/LinkedIn.png (LinkedIn))][4]
-[![github](https://github.com/shikhar1020jais1/Git-Social/blob/master/Icons/Github.png (Github))][5]
+<div align="center">
 
-<!-- To Link your profile to the media buttons -->
+| 📧 Contact | 💬 Discussion | 🛠️ Contributions |
+|---|---|---|
+| [fk776794@gmail.com](mailto:fk776794@gmail.com) | [GitHub Discussions](https://github.com/faizan-khanx) | [Pull Requests](https://github.com/FlightHacking/pulls) |
 
-[2]: https://www.instagram.com/EthicalFaizan
-[3]: https://www.twitter.com/EthicalFaizan
-[4]: https://www.linkedin.com/in/EthicalFaizan
-[5]: https://www.github.com/faizan-khanx
+---
+
+### Connect with Me
+[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white)](https://www.instagram.com/EthicalFaizan)
+[![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?style=for-the-badge&logo=Twitter&logoColor=white)](https://www.twitter.com/EthicalFaizan)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=for-the-badge&logo=LinkedIn&logoColor=white)](https://www.linkedin.com/in/EthicalFaizan)
+[![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=GitHub&logoColor=white)](https://www.github.com/faizan-khanx)
+
+</div>
 
 ## GITHUB STATS
 
@@ -468,11 +721,13 @@ For any questions or feedback, please contact [E-Mail Me](mailto:fk776794@gmail.
 
 ---
 
-## References
+## 📖 References & Further Reading
 
-- [1] Cybersecurity in Aviation: Best Practices
-- [2] STRIDE Threat Model Explained
-- [3] FAA Cybersecurity Regulations
-- [4] AI - ARTFICIAL INTELLIGENCE
+1.  **EUROCONTROL**: [Guide to Aviation Cybersecurity](https://www.eurocontrol.int)
+2.  **IATA**: [Cyber Security Strategy for the Air Transport Industry](https://www.iata.org)
+3.  **NIST**: [Cybersecurity Framework (Special Publication 800 Series)](https://www.nist.gov)
+4.  **FAA**: [Aviation Rulemapping and Cybersecurity Standards](https://www.faa.gov)
+5.  **Jun Li et al.**: *"Cyber-Physical Security in Aviation Systems"* (IEEE Research Paper).
+6.  **STRIDE Model**: [Microsoft Security Development Lifecycle](https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2008/cc307404(v=msdn.10))
 
 ---
